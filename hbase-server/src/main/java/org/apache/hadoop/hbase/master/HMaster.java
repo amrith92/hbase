@@ -79,6 +79,7 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.TableNotDisabledException;
 import org.apache.hadoop.hbase.TableNotFoundException;
 import org.apache.hadoop.hbase.UnknownRegionException;
+import org.apache.hadoop.hbase.backup.HFileArchiver;
 import org.apache.hadoop.hbase.client.ColumnFamilyDescriptor;
 import org.apache.hadoop.hbase.client.MasterSwitchType;
 import org.apache.hadoop.hbase.client.RegionInfo;
@@ -1493,6 +1494,11 @@ public class HMaster extends HRegionServer implements MasterServices {
     if (this.regionServerTracker != null) {
       this.regionServerTracker.stop();
     }
+
+    // This is a dirty fix to shutdown the archiver thread pool
+    // as it may fail to be cleaned up by the shutdown hook depending
+    // on when its thread pool is created.
+    HFileArchiver.stop();
   }
 
   private void createProcedureExecutor() throws IOException {

@@ -17,6 +17,26 @@
  */
 package org.apache.hadoop.hbase.backup;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.PathFilter;
+import org.apache.hadoop.hbase.HConstants;
+import org.apache.hadoop.hbase.client.RegionInfo;
+import org.apache.hadoop.hbase.regionserver.HStoreFile;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.util.CommonFSUtils;
+import org.apache.hadoop.hbase.util.EnvironmentEdgeManager;
+import org.apache.hadoop.hbase.util.FSUtils;
+import org.apache.hadoop.hbase.util.HFileArchiveUtil;
+import org.apache.hadoop.hbase.util.Threads;
+import org.apache.hadoop.io.MultipleIOException;
+import org.apache.hbase.thirdparty.com.google.common.base.Preconditions;
+import org.apache.yetus.audience.InterfaceAudience;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -33,26 +53,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.PathFilter;
-import org.apache.hadoop.hbase.HConstants;
-import org.apache.hadoop.hbase.client.RegionInfo;
-import org.apache.hadoop.hbase.regionserver.HStoreFile;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.hbase.util.CommonFSUtils;
-import org.apache.hadoop.hbase.util.EnvironmentEdgeManager;
-import org.apache.hadoop.hbase.util.FSUtils;
-import org.apache.hadoop.hbase.util.HFileArchiveUtil;
-import org.apache.hadoop.hbase.util.Threads;
-import org.apache.hadoop.io.MultipleIOException;
-import org.apache.yetus.audience.InterfaceAudience;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.hbase.thirdparty.com.google.common.base.Preconditions;
 
 /**
  * Utility class to handle the removal of HFiles (or the respective {@link HStoreFile StoreFiles})
@@ -76,9 +76,20 @@ public class HFileArchiver {
       };
 
   private static ThreadPoolExecutor archiveExecutor;
+  private static Thread archiveExecutorShutdownHook = null;
 
   private HFileArchiver() {
     // hidden ctor since this is just a util
+  }
+
+  /**
+   * Stop HFile archiver. Shuts down the archiver thread pool.
+   */
+  public static void stop() {
+    if (archiveExecutor != null && archiveExecutorShutdownHook != null) {
+        archiveExecutor.shutdown();
+        Runtime.getRuntime().removeShutdownHook(archiveExecutorShutdownHook);
+    }
   }
 
   /**
@@ -212,7 +223,8 @@ public class HFileArchiver {
         getThreadFactory());
 
       // Shutdown this ThreadPool in a shutdown hook
-      Runtime.getRuntime().addShutdownHook(new Thread(() -> archiveExecutor.shutdown()));
+      archiveExecutorShutdownHook = new Thread(() -> archiveExecutor.shutdown());
+      Runtime.getRuntime().addShutdownHook(archiveExecutorShutdownHook);
     }
     return archiveExecutor;
   }
