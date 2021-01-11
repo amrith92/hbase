@@ -1480,6 +1480,11 @@ public class HMaster extends HRegionServer implements MasterServices {
       this.assignmentManager.stop();
     }
 
+    // This is a dirty fix to shutdown the archiver thread pool
+    // as it may fail to be cleaned up by the shutdown hook depending
+    // on when its thread pool is created.
+    HFileArchiver.stop();
+
     stopProcedureExecutor();
 
     if (this.walManager != null) {
@@ -1494,11 +1499,6 @@ public class HMaster extends HRegionServer implements MasterServices {
     if (this.regionServerTracker != null) {
       this.regionServerTracker.stop();
     }
-
-    // This is a dirty fix to shutdown the archiver thread pool
-    // as it may fail to be cleaned up by the shutdown hook depending
-    // on when its thread pool is created.
-    HFileArchiver.stop();
   }
 
   private void createProcedureExecutor() throws IOException {

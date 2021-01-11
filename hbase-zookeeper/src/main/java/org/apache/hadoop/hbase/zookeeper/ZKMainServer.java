@@ -26,6 +26,7 @@ import org.apache.hadoop.hbase.HBaseInterfaceAudience;
 import org.apache.yetus.audience.InterfaceAudience;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeperMain;
+import org.apache.zookeeper.cli.CliException;
 
 
 /**
@@ -60,8 +61,9 @@ public class ZKMainServer {
      * @throws KeeperException if an unexpected ZooKeeper exception happens
      * @throws IOException in case of a network failure
      * @throws InterruptedException if the ZooKeeper client closes
+     * @throws CliException on zookeeper CLI errors
      */
-    void runCmdLine() throws KeeperException, IOException, InterruptedException {
+    void runCmdLine() throws KeeperException, IOException, InterruptedException, CliException {
       processCmd(this.cl);
       System.exit(0);
     }
