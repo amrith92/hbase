@@ -20,7 +20,7 @@
 # Be careful doing manual edits in this file. Do not change format
 # of release header or remove the below marker. This file is generated.
 # DO NOT REMOVE THIS MARKER; FOR INTERPOLATING CHANGES!-->
-## Release 2.2.3.ACROMANTULA - Unreleased (as of 2020-01-10)
+## Release 2.2.3.ACROMANTULA-patch-12012022 - Unreleased (as of 2020-01-10)
 
 ### NEW FEATURES:
 
@@ -152,7 +152,7 @@
 | [HBASE-23322](https://issues.apache.org/jira/browse/HBASE-23322) | [hbck2] Simplification on HBCKSCP scheduling |  Minor | hbck2 |
 | [HBASE-22480](https://issues.apache.org/jira/browse/HBASE-22480) | Get block from BlockCache once and return this block to BlockCache twice make ref count error. |  Major | . |
 | [HBASE-23136](https://issues.apache.org/jira/browse/HBASE-23136) | PartionedMobFileCompactor bulkloaded files shouldn't get replicated (addressing buklload replication related issue raised in HBASE-22380) |  Critical | . |
-| [HBASE-23217](https://issues.apache.org/jira/browse/HBASE-23217) | Set version as 2.2.3.ACROMANTULA-SNAPSHOT in branch-2.2 |  Major | . |
+| [HBASE-23217](https://issues.apache.org/jira/browse/HBASE-23217) | Set version as 2.2.3.ACROMANTULA-patch-12012022-SNAPSHOT in branch-2.2 |  Major | . |
 | [HBASE-22982](https://issues.apache.org/jira/browse/HBASE-22982) | Send SIGSTOP to hang or SIGCONT to resume rs and add graceful rolling restart |  Minor | integration tests |
 
 
