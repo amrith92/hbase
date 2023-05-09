@@ -93,7 +93,7 @@ It can be obtained at:
 
   * LICENSE Apache Software License, version 2.0.
   * HOMEPAGE:
-    * https://github.com/akka/akka/blob/wip-2.2.3.ACROMANTULA-for-scala-2.11/akka-actor/
+    * https://github.com/akka/akka/blob/wip-2.2.3.ACROMANTULA-shade-08052023.2-for-scala-2.11/akka-actor/
           src/main/java/akka/dispatch/AbstractNodeQueue.java
 
 The Netty Project includes additional subcomponents under additional licenses,
